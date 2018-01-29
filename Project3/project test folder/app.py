@@ -1,6 +1,4 @@
 #import dependencies
-import csv
-from flask import send_file
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -59,7 +57,7 @@ app = Flask(__name__)
 def index():
     DataObject = {}
 
-    file='TelecomUsageDemogone.csv'
+    file='TelecomUsageDemogFinal.csv'
     total_data=pd.read_csv(file)
     # data=['TENURE','TOTALCHARGES','MONTHLYCHARGES','MONTHLY_MINUTES_OF_USE','TOTAL_MINUTES_OF_USE','MONTHLY_SMS','TOTAL_SMS']
     data=['TENURE','TOTALCHARGES','MONTHLYCHARGES','MONTHLY_MINUTES_OF_USE','MONTHLY_SMS','TOTAL_SMS',"TOTAL_MINUTES_OF_USE","CHURN"]
@@ -104,7 +102,7 @@ def index():
     DataObject["corrFigpath"]=corrFigpath
 
     #plt.show()
-    file='TelecomUsageDemogFinal.csv'
+    file='clean.csv'
     total_data=pd.read_csv(file)
     X=total_data.drop(["CHURN","GENDER","PHONESERVICE","MULTIPLELINES_No","MULTIPLELINES_No phone service"],1)
     y=total_data["CHURN"]
@@ -172,104 +170,40 @@ def predict():
     #print(file)
 
     replayData=pd.read_csv(file)
-    # print("files end ") 
+    print("files end ") 
     #print(replayData)
-    X=replayData.drop(["CHURN"],1)
-        
+    X=replayData.drop(["CHURN","GENDER","PHONESERVICE","MULTIPLELINES_No","MULTIPLELINES_No phone service"],1)
+    y=replayData["CHURN"]
+    
     DataObject = {}
 
+    filteredData = []
     # Reload the classifier
     classifier = pickle.load(open("Classifier.sav", 'rb'))
-        
 
-    # print("files start ") 
+    print("files start ") 
 
-    # test_score = classifier.score(X, y)
-    # aoc_score_test= accuracy_score(y,classifier.predict(X))
-    # logit_roc_auc=roc_auc_score(y,classifier.predict(X))
-    # cls_report = classification_report(y,classifier.predict(X))
+    test_score = classifier.score(X, y)
+    aoc_score_test= accuracy_score(y,classifier.predict(X))
+    logit_roc_auc=roc_auc_score(y,classifier.predict(X))
+    cls_report = classification_report(y,classifier.predict(X))
 
-    # DataObject["test_score"]=test_score
-    # DataObject["auc_score_test"]=aoc_score_test
-    # DataObject["logit_roc_auc"]=  logit_roc_auc
-    # DataObject["cls_report"]=  report2dict(cls_report)
+    DataObject["test_score"]=test_score
+    DataObject["auc_score_test"]=aoc_score_test
+    DataObject["logit_roc_auc"]=  logit_roc_auc
+    DataObject["cls_report"]=  report2dict(cls_report)
 
     # Filter it down using the Classifier
-    churndata = []
-    X.head()
-    for index, row in X.iterrows():
-        # print(row["SENIORCITIZEN"])
-        if(classifier.predict([row['SENIORCITIZEN'],  \
-                            row['PARTNER'], \
-                            row['DEPENDENTS'], \
-                            row['TENURE'], \
-                            row['PAPERLESSBILLING'], \
-                            row['MONTHLYCHARGES'], \
-                            row['TOTALCHARGES'], \
-                            row['MONTHLY_MINUTES_OF_USE'], \
-                            row['TOTAL_MINUTES_OF_USE'], \
-                            row['MONTHLY_SMS'], \
-                            row['TOTAL_SMS'], \
-                            row['MULTIPLELINES_Yes'], \
-                            row['INTERNETSERVICE_DSL'], \
-                            row['INTERNETSERVICE_Fiber optic'], \
-                            row['INTERNETSERVICE_No'],
-                            row['ONLINESECURITY_No'],
-                            row['ONLINESECURITY_No internet service'],
-                            row['ONLINESECURITY_Yes'],
-                            row['ONLINEBACKUP_No'],
-                            row['ONLINEBACKUP_No internet service'],
-                            row['ONLINEBACKUP_Yes'],
-                            row['DEVICEPROTECTION_No'],
-                            row['DEVICEPROTECTION_No internet service'],
-                            row['DEVICEPROTECTION_Yes'],
-                            row['TECHSUPPORT_No'],
-                            row['TECHSUPPORT_No internet service'],
-                            row['TECHSUPPORT_Yes'],
-                            row['STREAMINGTV_No'],
-                            row['STREAMINGTV_No internet service'],
-                            row['STREAMINGTV_Yes'],
-                            row['STREAMINGMOVIES_No'],
-                            row['STREAMINGMOVIES_No internet service'],
-                            row['STREAMINGMOVIES_Yes'],
-                            row['CONTRACT_Month-to-month'],
-                            row['CONTRACT_One year'],
-                            row['CONTRACT_Two year'],
-                            row['PAYMENTMETHOD_Bank transfer automatic'],
-                            row['PAYMENTMETHOD_Credit card automatic'],
-                            row['PAYMENTMETHOD_Electronic check'],
-                            row['PAYMENTMETHOD_Mailed check']])==1):
-                churndata.append(row)
+    # for x in range(len(replayData)):
+    #     print(X[x])
+    #     if(classifier.predict(X[x]) == Y[x]):
+    #         filteredData.append(replayData[x])
 
-    # print(8*"_")
-    # print(churndata)
-    # print(8*"_")
-    # print(len(X))
-    # print(len(churndata))
-    DataObject["RecordsReceived"]=len(X)
-    DataObject["RecordsProcessed"]=len(X)
-    DataObject["Predictedchurncount"]=len(churndata)
-    df = pd.DataFrame(churndata)
-    #df.index.rename('_index', inplace=True)
-    df.to_csv("churndata.csv")
-    #churnrows=[]
-    # for i in churnData:
-    #       churnrows.append(i)
-    # print(churnrows) 
+    #print(len(replayData))
+    #print(len(filteredData))
+
     # Display only filtered Data
     return(jsonify(DataObject))
-@app.route('/getChurnData', methods=['GET'])
-def GetChurnData():
-    churnrows=[]
-    with open('churndata.csv') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            churnrows.append(row)
-    return (jsonify(churnrows))
-
-@app.route('/downloadChurnData', methods=['GET'])
-def DownloadChurnData():
-    return send_file("churndata.csv", as_attachment=True, attachment_filename='dowload-churndata.csv')
 
 if __name__ == "__main__":
     app.run(debug=True)
