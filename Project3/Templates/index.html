@@ -48,58 +48,110 @@
        
       <div class="container text-center ">
          
-        <h1 class="mb-1">Theasus </h1>
+        <h1 class="mb-1" ><strong>Theasus </strong></h1>
          
-        <h3 class="mb-5">
-            <em>Machine Learning</em>
+        <h3 class="mb-5"style="color:rgb(250, 250, 0);font-weight:normal;font-size:15px">
+            <em>predicting customer churn in the telecommunications industry </em>
          
         </h3>
-        <!--<a class="btn btn-dark btn-xl js-scroll-trigger" href="#about" id="about">About Us</a>
-        <a class="btn btn-dark btn-xl js-scroll-trigger" href="#graphs">Analysis</a> -->
-      </div>
+        <div class= "container-fluid position:relative ">
+        <a class="btn btn-green btn-xl js-scroll-trigger"  style="color:rgb(162, 226, 43)"href="#about" id="about">About Us</a>
+        <a class="btn btn btn-xl js-scroll-trigger"  style="color:rgb(162, 226, 43)"href="#model">Model</a>
+        <a class="btn btn btn-xl js-scroll-trigger" style="color:rgb(162, 226, 43)"  href="#churnprediction">ChurnPrediction</a>
+        <a class="btn btn  btn-xl js-scroll-trigger" style="color:rgb(162, 226, 43)" href="#clustering">Clustering</a>
+     </div> </div>
     </header>
 
 <!-- About us details -->
-
-  <section class="content-section bg-light" id="about">
-    <div class="container">
+<section class="content-section bg-light" id="about">
+    
+          <div class="row">
+            <div class="col-lg-10 mx-auto">
+              <h3 style="color:rgb(62, 128, 0)"><u><strong>Team :</strong></u></h3>
+              <div class="row" id="details">
+                <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+                  <span class="service-icon mx-auto mb-3">
+                    <img class="img-fluid" style="border:5px solid #ffffff" src="../static/img/Asish.jpg" alt="Asish">
+                  </span>
+                  <h5 style="color:rgb(25,25,112)"><strong>Asish Nachene</strong></h5>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+                  <span class="service-icon mx-auto mb-3">
+                    <img class="img-fluid" style="border:5px solid #ffffff" src="../static/img/Deshan.jpg" alt="Deshan">
+                  </span>
+                  <h5 style="color:rgb(25,25,112)"><strong>Deshan Yu</strong></h5> 
+                </div>
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+                  <span class="service-icon mx-auto mb-3">
+                    <img class="img-fluid" style="border:5px solid #ffffff" src="../static/img/Fervis.jpg" alt="Fervis">
+                  </span>
+                  <h5 style="color:rgb(25,25,112)"><strong>Fervis Lauan</strong></h5> 
+                </div>
+                <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+                  <span class="service-icon mx-auto mb-3">
+                    <img class="img-fluid" style="border:5px solid #ffffff" src="../static/img/Naga.jpg" alt="Naga">
+                  </span>
+                  <h5 style="color:rgb(25,25,112)"><strong>Naga Pulivarthi</strong></h5>
+                </div>
+              </div>
+              <br>
+              <hr/>
+              <div class="container text-center">
+              <!-- <a class="btn btn btn-xl js-scroll-trigger"style="color:rgb(162, 226, 43)" href="#graphs">Model</a> -->
+            </div>
+          </div>
+          </div>
+        </div>
+      </section> 
+      <!-- Model Details -->
+  <section class="content-section bg-light" id="model">
+    <!-- <div class="container">
         <div class="row">
             <div class="col-lg-12 col-md-6 mb-5 mb-lg-0">
               
             </div>
-        </div>
+        </div> -->
+        <div class="container-fluid">   
     <div class="row">
-        <div class="col-lg-6 col-md-6 mb-5 mb-lg-0">
-            <h4><strong>Distribution</strong></h4>
+        <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
+            <h4 style="color:rgb(62, 128, 0)"><strong>Continuous Distribution</strong></h4>
             <span class="service-icon mx-auto mb-3">
-              <img src="{{ histImageUrl }}"  width="400"/>
+              <img src="{{ histImageUrl }}"  width="500"/>
             </span>
         </div>
-        <div class="col-lg-6 col-md-6 mb-5 mb-lg-0">
-            <h4><strong>Correalation</strong></h4>
+        <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
+            <h4 style="color:rgb(62, 128, 0)"><strong>Categorical Distribution</strong></h4>
             <span class="service-icon mx-auto mb-3">
-                <img src="{{ corrFigpath }}"  width="400"/>
+                <img src="{{ barImageUrl }}"  width="500"/>
+              </span>
+              <span class="service-icon mx-auto mb-3">
+                <img src="{{ barImageUrl1 }}"  width="500"/>
               </span>
         </div>
-       <!-- <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-            <h4><strong>Categorical Distribution</strong></h4>
+
+        <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
+            <h4 style="color:rgb(62, 128, 0)"><strong>Correalation</strong></h4>
             <span class="service-icon mx-auto mb-3">
-                <img src="{{ corrFigpath }}"  width="400"/>
+                <img src="{{ corrFigpath }}"  width="500"/>
               </span>
-        </div> -->
+        </div>
+       
+    </div>
+    </div>
     </div>
     <div class="container-fluid">
     <div class="row" style="margin:5px">
-        <span style="font-weight:bold">Logistic Regression</span>
+        <h4 style="color:rgb(62, 128, 0)"><strong>Logistic Regression</strong></h4> 
+      <!-- <span style="font-weight:1500" >Logistic Regression</span> -->
     </div>
     <div class="row" style="margin:5px">
       <div class="col-lg-3 col-md-6 mb-5 mb-lg-0" style="margin:5px">
-          <span>Scores</span>
+          <span style="color:rgb(25,25,112);font-weight:bold" >Scores</span>
         <table class="" border="1" rules="all">
             
             <tr>
-                <th style="padding:5px">Type</td>
-                <th style="padding:5px">Value</td>
+                <th style="padding:5px; color:rgb(62, 128, 0)">Type</td>
+                <th style="padding:5px; color:rgb(62, 128, 0)">Value</td>
             </tr>
             <tr>
                 <td style="padding:5px">train_score</td>
@@ -121,14 +173,22 @@
                 <td style="padding:5px">logit_roc_auc</td>
                 <td style="padding:5px">{{logit_roc_auc}}</td>
             </tr>
+            <tr>
+                <td style="padding:5px">tpr</td>
+                <td style="padding:5px">0.787051899411</td>
+            </tr>
+            <tr>
+                <td style="padding:5px">fpr</td>
+                <td style="padding:5px">0.286818708929</td>
+            </tr>
         </table>
       </div>
       <div class="col-lg-4 col-md-6 mb-5 mb-lg-0" style="margin:5px">
-        <span>Classification Report</span>
+        <span style="color:rgb(25,25,112);font-weight:bold">Classification Report</span>
         <table class="" border="1" rules="all">
             <tr>
                 {% for key in cls_report[0].keys() %}
-                  <th style="padding:5px">{{key}}</td>
+                  <th style="padding:5px;color:rgb(62, 128, 0)">{{key}}</td>
                 {% endfor %}
             </tr>
             {% for item in cls_report %}
@@ -141,17 +201,21 @@
         </table> 
       </div>
       <div  class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-          <span>ROC Curve</span>
+          <span style="color:rgb(25,25,112);font-weight:bold">ROC Curve</span>
           <img src="{{rocCurveImageUrl}}" width="300px"> 
       </div>
     </div>
   </div>
-  <div class="container">
+</section>
+<!-- Prediction details -->
+<section  class="content-section bg-light" id="churnprediction">
+  <div class="container-fluid">
     <div class="row">
         <div  class="col-lg-3 col-md-6 mb-5 mb-lg-0">     
           <form id="upload-file" method="post" enctype="multipart/form-data">
             <fieldset>
-                <label for="file">Select a file</label>
+              <h4 style="color:rgb(62, 128, 0)">ChurnPrediction</h4>
+                <label for="file" style="color:rgb(25,25,112);font-weight:bold">Select a file</label>
                 <input name="file" type="file">
             </fieldset>
             <fieldset>
@@ -160,10 +224,12 @@
         </form>
       </div> 
     </div>
+    <hr/>
     <div class="row">
-      <div  class="col-lg-3 col-md-6 mb-5 mb-lg-0">
-        <hr/>
-          <span>Result</span>
+      <div  class="col-lg-3 col-md-6 mb-5 mb-lg-0" style="margin:5px">
+         </div>
+           <span style="color:rgb(25,25,112);font-weight:bold;">Result</span>
+          <!-- <label for="file" style="color:rgb(25,25,112);font-weight:bold">Result</label> -->
           <div>
               <table id="predict_result" class="" border="1" rules="all">
                 </table> 
@@ -181,8 +247,15 @@
 
     </div>
 </div>
-  </section>
+</section>
+<footer class="footer text-center">
+    <hr>
+    <div class="container">
+      <p class="text-muted mb-0">Copyright @Theasus Team  Of Analysis 2018</p>
+    </div>
+  </footer>
 
 </body>
+  
 
 </html>

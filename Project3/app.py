@@ -22,6 +22,14 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import classification_report
 from flask import request  
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.style.use('ggplot') 
+from collections import Counter
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+
 
 def report2dict(cr):
     # Parse rows
@@ -41,16 +49,10 @@ def report2dict(cr):
         d ={}
         d["class_label"] = class_label
         for j, m in enumerate(measures):
-            print(j)
-            print(m)
             d[m.strip()] = row[j+1]
-           # D_class_data[class_label][m.strip()] = float(row[j + 1].strip())
+          
         D_class_data.append(d)
     return D_class_data
-
-# return(str(train_score))
-
-
 # ===========================Flask Connection==========================
 app = Flask(__name__)
 
@@ -58,10 +60,10 @@ app = Flask(__name__)
 # Return the dashboard homepage.
 def index():
     DataObject = {}
-
-    file='TelecomUsageDemogone.csv'
+    sns.set_palette(palette=None)
+    sns.set(style="ticks")
+    file='TelecomUsageDemoone.csv'
     total_data=pd.read_csv(file)
-    # data=['TENURE','TOTALCHARGES','MONTHLYCHARGES','MONTHLY_MINUTES_OF_USE','TOTAL_MINUTES_OF_USE','MONTHLY_SMS','TOTAL_SMS']
     data=['TENURE','TOTALCHARGES','MONTHLYCHARGES','MONTHLY_MINUTES_OF_USE','MONTHLY_SMS','TOTAL_SMS',"TOTAL_MINUTES_OF_USE","CHURN"]
 
     hasAnyNullValues = total_data.isnull().values.any()
@@ -71,7 +73,7 @@ def index():
     # Set figure size
 
     basePath ="static/img/"
-    telecome_data.hist(bins=100,figsize=(10,10))
+    telecome_data.hist(bins=100,figsize=(10,10),color="#00008B")
     histImageUrl = basePath + "histogram.jpg"
     plt.savefig(histImageUrl)
 
@@ -83,11 +85,13 @@ def index():
     # # Correaltion matrix plot
     def plot_corr(total_data, corrFigpath,size=11):
         corr = total_data.corr()  
-    #     cmap = cm.get_cmap('jet', 30)
+        cmap = cm.get_cmap('viridis',30)
         # data frame correlation function
         fig, ax = plt.subplots(figsize=(size, size))
     #     cax = ax.imshow(corr, interpolation="nearest", cmap=cmap)
-        ax.matshow(corr)   # color code the rectangles by correlation value
+        print("corr:")
+        print(corr)
+        ax.matshow(corr, interpolation="nearest", cmap=cmap)   # color code the rectangles by correlation value
         plt.xticks(range(len(corr.columns)), corr.columns)  # draw x tick marks
         plt.yticks(range(len(corr.columns)), corr.columns)  # draw y tick marks
         plt.savefig(corrFigpath)
@@ -102,6 +106,35 @@ def index():
 
     DataObject["correaltion"]=correaltion
     DataObject["corrFigpath"]=corrFigpath
+
+    #categorical Distribution
+    np.random.seed(sum(map(ord, "categorical")))
+    file1='TelecomUsageDemoone.csv'
+    all_data=pd.read_csv(file1)
+    categorical_data=['CHURN','MONTHLYCHARGES','TOTALCHARGES','GENDER','TENURE','PHONESERVICE','CONTRACT','MULTIPLELINES','PARTNER']
+    all_data=pd.read_csv(file,usecols=categorical_data)
+    
+    
+    flatui = ["yellow", "#00008B", "#32CD32"]
+
+    # This Function takes as input a custom palette
+    #g = sns.factorplot(x="CHURN", y="TOTALCHARGES", hue="MULTIPLELINES",kind="bar",col="GENDER",
+    #palette=sns.color_palette(flatui),data=all_data,ci=None)
+    g = sns.factorplot(x="CHURN", y="TOTALCHARGES", hue="PHONESERVICE",kind="bar",col="GENDER",palette=sns.color_palette(flatui),data=all_data,ci=None)
+    # # remove the top and right line in graph
+    sns.despine()
+ 
+    barImageUrl = basePath + "barchart.jpg"
+    # barImageUrl1 = basePath + "barchart1.jpg"
+    plt.savefig(barImageUrl)
+    DataObject["barImageUrl"]=barImageUrl
+
+    g = sns.factorplot(x="CHURN", y="TOTALCHARGES", hue="MULTIPLELINES",kind="bar",col="GENDER", palette=sns.color_palette(flatui),data=all_data,ci=None)
+    barImageUrl1=basePath + "barchart1.jpg"
+    plt.savefig(barImageUrl1)
+    DataObject["barImageUrl1"]=barImageUrl1
+    # plt.savefig(barImageUrl1)
+    # DataObject["barImageUrl1"]=barImageUrl1
 
     #plt.show()
     file='TelecomUsageDemogFinal.csv'
@@ -125,7 +158,6 @@ def index():
 
     DataObject["auc_score_train"]=auc_score_train
     DataObject["auc_score_test"]=auc_score_test
-
     
     logit_roc_auc=roc_auc_score(y_test,classifier.predict(X_test))
     cls_report = classification_report(y_test,classifier.predict(X_test))
@@ -169,32 +201,15 @@ def predict():
  
     print("files length ")
     file = request.files['file']
-    #print(file)
+    
 
     replayData=pd.read_csv(file)
-    # print("files end ") 
-    #print(replayData)
     X=replayData.drop(["CHURN"],1)
-        
     DataObject = {}
 
     # Reload the classifier
     classifier = pickle.load(open("Classifier.sav", 'rb'))
-        
-
-    # print("files start ") 
-
-    # test_score = classifier.score(X, y)
-    # aoc_score_test= accuracy_score(y,classifier.predict(X))
-    # logit_roc_auc=roc_auc_score(y,classifier.predict(X))
-    # cls_report = classification_report(y,classifier.predict(X))
-
-    # DataObject["test_score"]=test_score
-    # DataObject["auc_score_test"]=aoc_score_test
-    # DataObject["logit_roc_auc"]=  logit_roc_auc
-    # DataObject["cls_report"]=  report2dict(cls_report)
-
-    # Filter it down using the Classifier
+     # Filter it down using the Classifier
     churndata = []
     X.head()
     for index, row in X.iterrows():
@@ -241,22 +256,12 @@ def predict():
                             row['PAYMENTMETHOD_Mailed check']])==1):
                 churndata.append(row)
 
-    # print(8*"_")
-    # print(churndata)
-    # print(8*"_")
-    # print(len(X))
-    # print(len(churndata))
     DataObject["RecordsReceived"]=len(X)
     DataObject["RecordsProcessed"]=len(X)
     DataObject["Predictedchurncount"]=len(churndata)
     df = pd.DataFrame(churndata)
     #df.index.rename('_index', inplace=True)
     df.to_csv("churndata.csv")
-    #churnrows=[]
-    # for i in churnData:
-    #       churnrows.append(i)
-    # print(churnrows) 
-    # Display only filtered Data
     return(jsonify(DataObject))
 @app.route('/getChurnData', methods=['GET'])
 def GetChurnData():
