@@ -29,6 +29,9 @@ matplotlib.style.use('ggplot')
 from collections import Counter
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from collections import defaultdict
+from random import randint as rand
 
 
 def report2dict(cr):
@@ -60,6 +63,7 @@ app = Flask(__name__)
 # Return the dashboard homepage.
 def index():
     DataObject = {}
+    q = "?k="+ str( np.random.randn())
     sns.set_palette(palette=None)
     sns.set(style="ticks")
     file='TelecomUsageDemoone.csv'
@@ -78,7 +82,7 @@ def index():
     plt.savefig(histImageUrl)
 
     DataObject["hasAnyNullValues"] =hasAnyNullValues
-    DataObject["histImageUrl"] = histImageUrl
+    DataObject["histImageUrl"] = histImageUrl + q
 
     #print(DataObject)
 
@@ -105,7 +109,7 @@ def index():
     correaltion=plot_corr(total_data,corrFigpath)
 
     DataObject["correaltion"]=correaltion
-    DataObject["corrFigpath"]=corrFigpath
+    DataObject["corrFigpath"]=corrFigpath + q
 
     #categorical Distribution
     np.random.seed(sum(map(ord, "categorical")))
@@ -118,25 +122,176 @@ def index():
     flatui = ["yellow", "#00008B", "#32CD32"]
 
     # This Function takes as input a custom palette
-    #g = sns.factorplot(x="CHURN", y="TOTALCHARGES", hue="MULTIPLELINES",kind="bar",col="GENDER",
-    #palette=sns.color_palette(flatui),data=all_data,ci=None)
+    
     g = sns.factorplot(x="CHURN", y="TOTALCHARGES", hue="PHONESERVICE",kind="bar",col="GENDER",palette=sns.color_palette(flatui),data=all_data,ci=None)
     # # remove the top and right line in graph
     sns.despine()
  
     barImageUrl = basePath + "barchart.jpg"
-    # barImageUrl1 = basePath + "barchart1.jpg"
     plt.savefig(barImageUrl)
-    DataObject["barImageUrl"]=barImageUrl
+    DataObject["barImageUrl"]=barImageUrl + q
 
     g = sns.factorplot(x="CHURN", y="TOTALCHARGES", hue="MULTIPLELINES",kind="bar",col="GENDER", palette=sns.color_palette(flatui),data=all_data,ci=None)
     barImageUrl1=basePath + "barchart1.jpg"
     plt.savefig(barImageUrl1)
-    DataObject["barImageUrl1"]=barImageUrl1
-    # plt.savefig(barImageUrl1)
-    # DataObject["barImageUrl1"]=barImageUrl1
+    DataObject["barImageUrl1"]=barImageUrl1 + q
+    
+    # clustering details
+    df1 = pd.read_csv('TelecomUsageDemogFinal.csv')
+    df = df1[df1['CHURN'] == 1]
 
-    #plt.show()
+    dfnc = df1[df1['CHURN'] == 0]
+    df.groupby(["CHURN"])["CHURN"].count()
+    dit = Counter(df["CHURN"])
+    K = len(dit)
+    y = df["CHURN"]
+    Xt = df[["TENURE","MONTHLYCHARGES","MONTHLY_MINUTES_OF_USE","MONTHLY_SMS"]]
+    from sklearn.preprocessing import StandardScaler
+    X_scaler = StandardScaler().fit(Xt)
+    X = X_scaler.transform(Xt)
+    X = np.array(X)
+    pca = PCA(n_components=2, whiten=False).fit(X)
+    X_trans = pca.transform(X)
+    print(pca.explained_variance_ratio_)
+    print(sum(pca.explained_variance_ratio_))
+
+    plt.figure()
+    plt.scatter(X_trans[:, 0], X_trans[:, 1])
+    clusterimageurl=basePath + "cluster1.jpg"
+    plt.savefig(clusterimageurl)
+    DataObject["clusterimageurl"]=clusterimageurl + q
+    from sklearn.cluster import KMeans
+    model = KMeans(n_clusters=10)
+    model = model.fit(X_trans)
+    cmap = cm.get_cmap('viridis',30)
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X_trans[:,0], X_trans[:,1], c=model.labels_.astype(float),cmap=cmap)
+    clusterimageurl1=basePath + "cluster2.jpg"
+    plt.savefig(clusterimageurl1)
+    DataObject["clusterimageurl1"]=clusterimageurl1 + q
+    print("Cluster bin sizes ", Counter(model.labels_))
+    model.predict(X_trans)
+    model.score(X_trans)
+    print("Actual class bin sizes ", Counter(y))
+    print("Cluster bin sizes ", Counter(model.labels_))
+    # Now we will implement our own K-means algo 
+    class k_means(object):
+            def __init__(self, K=2):
+                self.K = K
+            
+            @staticmethod
+            def new_centroids(clusters):
+                """
+                This function returns the updated centroids after computing the mean
+                of each cluster
+                """
+                return [np.mean(i, axis=0) for i in clusters.values()]
+            
+            @classmethod
+            def clustering(cls, clusters, data, rd_points):
+                """
+                This function puts the data into their respective clusters
+                """
+                for i in data:
+                    clusters[cls.lable(data_point=i, points=rd_points)].append(i)
+                return
+            
+            @classmethod 
+            def lable(cls, data_point, points):
+                """
+                This function returns the labels of a data point
+                """
+                values = [cls.euclid_dis(data_point, i) for i in points]
+                return min(range(len(values)), key=values.__getitem__)
+            
+            @classmethod
+            def centroids(cls, data, K):
+                """
+                Now we are going to randomly select K indexes and make them our centroids
+                """
+                mean_p = np.mean(data, axis=0)
+                dist_log = []
+                result = []
+                while len(result) < K:
+                    if not dist_log:
+                        p = data[rand(0, K - 1)]
+                        result.insert(0, p)
+                        dist_log.insert(0, cls.euclid_dis(mean_p, p))
+                    else:
+                        for i in data:
+                            p = i
+                            if np.any(result == p):
+                                continue
+                            d = cls.euclid_dis(p, result[0])
+                            if d > dist_log[0]:
+                                result.insert(0, p)
+                                dist_log.insert(0, cls.euclid_dis(mean_p, p))
+                                break
+                return result    
+                
+            @staticmethod
+            def euclid_dis(a, b):
+                """
+                We are using the norm function of numpy to calculate the euclidean distance
+                """
+                return np.linalg.norm(a - b)
+                
+            def fit(self, data):
+                """
+                The main function that will return the lables of the data
+                """
+                # initialize centroids randomly
+                rd_points = k_means.centroids(data, K=self.K)
+                
+                # initialize book keeping variables
+                counter = False
+                clusters = None
+                change_log = []
+                
+                # initializing the main loop
+                while counter is False:
+                    # we will store each cluster in a list
+                    clusters = defaultdict(list)
+                    
+                    # putting the data into their own clusters based on the centroids
+                    k_means.clustering(clusters, data, rd_points)
+                    
+                    # change centroid based on cluster mean
+                    rd_points = k_means.new_centroids(clusters)
+                    
+                    # now we are going to see if there are any changes in the cluster
+                    temp = [len(i) for i in clusters.values()]
+                    if not change_log:
+                        change_log = temp
+                    else:
+                        if temp == change_log:
+                            counter = True
+                        else:
+                            change_log = temp
+                            
+                self.points = rd_points
+                self.data = data
+                
+            def labels(self):
+                """
+                This function returns the labels of each and every data point in the
+                dataset
+                """
+                r = []
+                for i in self.data:
+                    r.append(k_means.lable(i, self.points))
+                return np.array(r)
+    model.labels_.astype(float)
+    model2 = k_means(10)
+    model2.fit(X_trans)
+    labels = model2.labels()
+    cmap = cm.get_cmap('viridis',30)
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X_trans[:,0], X_trans[:,1],cmap=cmap, c=labels.astype(float))
+    clusterimageurl2=basePath + "cluster3.jpg"
+    plt.savefig(clusterimageurl2)
+    DataObject["clusterimageurl2"]=clusterimageurl2 + q
+    #logistic regression model
     file='TelecomUsageDemogFinal.csv'
     total_data=pd.read_csv(file)
     X=total_data.drop(["CHURN","GENDER","PHONESERVICE","MULTIPLELINES_No","MULTIPLELINES_No phone service"],1)
@@ -185,7 +340,7 @@ def index():
 
     rocCurveImageUrl = basePath + "roc_curve.jpg"
     plt.savefig(rocCurveImageUrl)
-    DataObject["rocCurveImageUrl"]=  rocCurveImageUrl
+    DataObject["rocCurveImageUrl"]=  rocCurveImageUrl + q
 
     # Pickle 
     pickle.dump(classifier, open("Classifier.sav", 'wb'))
