@@ -114,13 +114,13 @@
         <div class="container-fluid">   
     <div class="row">
         <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-            <h4 style="color:rgb(62, 128, 0)"><strong>Continuous Distribution</strong></h4>
+            <h4 style="color:rgb(62, 128, 0)"><strong>Continuous Var Customer Distribution</strong></h4>
             <span class="service-icon mx-auto mb-3">
               <img src="{{ histImageUrl }}"  width="500"/>
             </span>
         </div>
         <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-            <h4 style="color:rgb(62, 128, 0)"><strong>Categorical Distribution</strong></h4>
+            <h4 style="color:rgb(62, 128, 0)"><strong>Categorical Var TotalCharge Distribution</strong></h4>
             <span class="service-icon mx-auto mb-3">
                 <img src="{{ barImageUrl }}"  width="500"/>
               </span>
@@ -130,7 +130,7 @@
         </div>
 
         <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-            <h4 style="color:rgb(62, 128, 0)"><strong>Correalation</strong></h4>
+            <h4 style="color:rgb(62, 128, 0)"><strong>Correlation</strong></h4>
             <span class="service-icon mx-auto mb-3">
                 <img src="{{ corrFigpath }}"  width="500"/>
               </span>
@@ -159,20 +159,20 @@
                 <td style="padding:5px">train_score</td>
                 <td style="padding:5px">{{train_score}}</td>
             </tr>
-            <tr>
+             <tr>
                 <td style="padding:5px">test_score</td>
                 <td style="padding:5px">{{test_score}}</td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td style="padding:5px">auc_score_train</td>
                 <td style="padding:5px">{{auc_score_train}}</td>
-            </tr>
-            <tr>
-                <td style="padding:5px">auc_score_test</td>
+            </tr> --> -->
+            <!-- <tr>
+                <td style="padding:5px">auc</td>
                 <td style="padding:5px">{{auc_score_test}}</td>
-            </tr>
+            </tr> -->
             <tr>
-                <td style="padding:5px">logit_roc_auc</td>
+                <td style="padding:5px">auc</td>
                 <td style="padding:5px">{{logit_roc_auc}}</td>
             </tr>
             <tr>
@@ -255,19 +255,19 @@
     <div class="container-fluid">
         <div class="row" >
             <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-                <h4 style="color:rgb(62, 128, 0)"><strong>Clustering</strong></h4>
+                <h4 style="color:rgb(62, 128, 0)"><strong>Scatter Plot</strong></h4>
                 <span class="service-icon mx-auto mb-3">
                   <img src="{{ clusterimageurl }}"  width="500"/>
                 </span>
             </div>  
             <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-                <h4 style="color:rgb(62, 128, 0)"><strong>Clustering1</strong></h4>
+                <h4 style="color:rgb(62, 128, 0)"><strong>k Mean Clustering</strong></h4>
                 <span class="service-icon mx-auto mb-3">
                   <img src="{{ clusterimageurl1 }}"  width="500"/>
                 </span>
             </div> 
             <div class="col-lg-4 col-md-6 mb-5 mb-lg-0">
-                <h4 style="color:rgb(62, 128, 0)"><strong>Clustering2</strong></h4>
+                <h4 style="color:rgb(62, 128, 0)"><strong>Manual Clustering</strong></h4>
                 <span class="service-icon mx-auto mb-3">
                   <img src="{{ clusterimageurl2 }}"  width="500"/>
                 </span>

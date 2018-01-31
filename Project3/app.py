@@ -87,6 +87,7 @@ def index():
     #print(DataObject)
 
     # # Correaltion matrix plot
+    
     def plot_corr(total_data, corrFigpath,size=11):
         corr = total_data.corr()  
         cmap = cm.get_cmap('viridis',30)
@@ -98,6 +99,8 @@ def index():
         ax.matshow(corr, interpolation="nearest", cmap=cmap)   # color code the rectangles by correlation value
         plt.xticks(range(len(corr.columns)), corr.columns)  # draw x tick marks
         plt.yticks(range(len(corr.columns)), corr.columns)  # draw y tick marks
+        cax = ax.imshow(total_data.corr(), interpolation="nearest", cmap=cmap) 
+        fig.colorbar(cax, ticks=[-0.75,-1,-0.5,0,0.5,0.75,+1])
         plt.savefig(corrFigpath)
     #     fig.colorbar()
 
@@ -105,7 +108,7 @@ def index():
     plot_corr(total_data,corrFigpath)
 
     total_data.corr()
-    del total_data['TOTAL_MINUTES_OF_USE']
+    # del total_data['TOTAL_MINUTES_OF_USE']
     correaltion=plot_corr(total_data,corrFigpath)
 
     DataObject["correaltion"]=correaltion
@@ -212,7 +215,7 @@ def index():
                 mean_p = np.mean(data, axis=0)
                 dist_log = []
                 result = []
-                while len(result) < K:
+                while len(result) <= K:
                     if not dist_log:
                         p = data[rand(0, K - 1)]
                         result.insert(0, p)
